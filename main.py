@@ -7,7 +7,7 @@ from numpy import genfromtxt
 from lqr_gain import dLQR
 from jacobians import num_jacobian
 from dynamics import dynamics
-from Plotting import plotting
+from plotting import plotting
 from constraints import constraints
 from objective import objective_func
 from trapziodal_collocation import trapz_colloc
@@ -15,7 +15,7 @@ from init_guess import init_guess
 from simulation import simulation
 
 """
-Trajectory Optimization Using Casadi.
+Trajectory Optimization Using Casadi Framework.
 """                 
 
 # Numerical parameters

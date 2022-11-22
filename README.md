@@ -11,3 +11,7 @@ This could be useful for dynamical systems with larger DoF such as quadcopter or
 
 
 We also combine all the processes, from calculating the optimal trajectory, to designing the appropriate controller to follow this trajectory and then stabilize the system at the desired conditions. 
+
+Here you can see comparison of the time it take the trajectory to converge between the three mentioned techniques
+![figure1](https://user-images.githubusercontent.com/22743949/203214160-c518ed3c-9a91-4ad3-bd25-770c5360ac2c.png)
+![figure2](https://user-images.githubusercontent.com/22743949/203214165-de8ca39e-76b0-4679-b6b8-13825b3d7ec2.png)

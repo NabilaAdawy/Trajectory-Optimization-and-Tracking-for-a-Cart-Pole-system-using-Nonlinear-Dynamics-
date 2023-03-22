@@ -2,6 +2,7 @@ import numpy as np
 from numpy import genfromtxt
 from matplotlib.pyplot import *
 from scipy.integrate import odeint
+from scipy.interpolate import CubicSpline
 
 # Defining the system dynamics
 
@@ -30,7 +31,7 @@ def sysode(x, t, parameters, u):
     M_c = M_term(x, parameters)
     h_c = h_term(x, parameters)
 
-    ddq = np.dot(np.linalg.inv(M_c),  u - h_c)
+    ddq = np.dot(np.linalg.inv(M_c),  u(t) - h_c)
 
     return np.concatenate([dq, ddq])
 
@@ -45,7 +46,6 @@ params = I1, m1, M1, L1, g1
 N = 50
 NORM = np.zeros((0, N))
 methods = ['imp', 'exp', 'var']
-
 
 control = {}
 trajectory = {}
@@ -69,34 +69,28 @@ for method in methods:
     cont = genfromtxt(
         fr'D:\IU\Fall22\TermProject\Trajectory-Optimization-Methods-for-Dynamical-Systems\Opt_traject_Data\u_opt_{method}_{N}N.csv', delimiter=',')
 
-    control[method] = np.array(cont)
-
-    x_d = np.array([dist[:-1], ang[:-1]])
     cont = np.array(cont)
+    control[method] = cont
 
     # Integration parameters
     t0 = 0  # Initial time
-    t_span = np.linspace(t0, dt, scale)  # Create time span
     x0 = np.array([0, 0, 0, 0])  # Set initial state
-    X = x0
-    U = np.array([cont[0], 0])
 
-    # Open Loop Simulation
-    for i in range(N-1):
-        u = np.array([cont[i+1], 0])
-        sol = odeint(sysode, x0, t_span,
-                     args=(params, u, ))  # Integrate system
+    # _________________________ Interpolating control _________________________
+    t_interpolate = np.linspace(t0, T, N)
+    u_interpolate = CubicSpline(t_interpolate, cont)
 
-        x0 = sol[-1]
-        X = np.vstack((X, x0))
-        U = np.vstack((U, u))
+    # ________________________ Open Loop Simulation _________________________
+    t_new = np.linspace(t0, T, N*scale)
+    sol = odeint(sysode, x0, t_new,
+                 args=(params, u_interpolate, ))  # Integrate system
 
-    x_pos, theta, dx, dtheta = np.split(X, 4, axis=1)
+    sol = np.array([sol[i, :] for i in range(0, N*scale, scale)])
+    x_pos, theta, dx, dtheta = np.split(sol, 4, axis=1)
 
     solutions[method]['ang'] = theta[:, 0]
     solutions[method]['dist'] = x_pos[:, 0]
     solutions[method]['q'] = np.array([x_pos[:, 0], theta[:, 0]])
-    solutions[method]['u'] = U
 
     # calculating the integral error of position and angle
     position_intergal_error = np.trapz(abs(x_pos[:, 0] - dist[:-1]), dx=dt)
@@ -118,14 +112,20 @@ var_norm = np.linalg.norm(
     solutions['var']['q'] - trajectory['var']['q'], axis=0)
 
 norm_imp_integral_error = np.trapz(imp_norm, dx=dt)
+norm_exp_integral_error = np.trapz(exp_norm, dx=dt)
 norm_var_integral_error = np.trapz(var_norm, dx=dt)
 print('the integral error for norm_imp: ', norm_imp_integral_error)
+print('the integral error for norm_exp: ', norm_exp_integral_error)
 print('the integral error for norm_var: ', norm_var_integral_error)
 
+
 # for k in range(N):
-#     if x_norm[k] > 3.9:
+#     if imp_norm[k] > 0.2:
 #         t_horizon = dt*k
-#         print("time of error Divergence: ", t_horizon)
+#         print("time of error Divergence (Implicit): ", t_horizon)
+#     if var_norm[k] > 0.2:
+#         t_horizon = dt*k
+#         print("time of error Divergence (Variational): ", t_horizon)
 
 t = np.array(range(N+1))*dt
 

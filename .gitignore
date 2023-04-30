@@ -1,6 +1,7 @@
 __pycache__
 Opt_traject_Data
-notebooks
 figures
+notebooks\Var_coupled_masses.ipynb
 structure.txt
 open_loop_simulation.py
+criterias copy.py

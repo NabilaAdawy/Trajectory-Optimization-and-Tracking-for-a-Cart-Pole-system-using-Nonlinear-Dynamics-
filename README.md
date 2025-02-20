@@ -1,7 +1,5 @@
 # Variational Integrators in Trajectory Optimization and Model Predictive Control
 
-Implementation of Variational Integrators in Trajectory Optimization Problem
-
 Studying the Trajectory optimization technique (Direct Collocation) with three different representation of the dynamical system (the usual implicit form of dynamics, explicit form, and novel method called variational integrators). Comparing the effect of number of decision variables on the speed of the trajectory optimization solution convergence. We found that the novel approach yielded a much faster trajectory convergence.
 
 We are using CasADi python (CasADi is an open-source framework for nonlinear optimization and algorithmic differentiation) to do our simulations. The solution is obtained using IPOPT (Interior Point Optimizer) solver. 

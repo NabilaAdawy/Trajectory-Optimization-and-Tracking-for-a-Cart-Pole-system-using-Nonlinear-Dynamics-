@@ -1,4 +1,4 @@
-# Trajectory Optimization Methods for Dynamical Systems
+# Variational Integrators in Trajectory Optimization and Model Predictive Control
 
 Implementation of Variational Integrators in Trajectory Optimization Problem
 
